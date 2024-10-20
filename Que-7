@@ -1,0 +1,21 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import RFECV
+from sklearn.metrics import accuracy_score
+diabetes_dataset = pd.read_csv('diabetes.csv')
+X_features = diabetes_dataset.drop(columns=['Outcome'])
+y_target = diabetes_dataset['Outcome']
+selector_rfecv_diabetes =
+RFECV(estimator=LogisticRegression(max_iter=200), step=1, cv=5)
+selector_rfecv_diabetes.fit(X_features, y_target)
+X_selected_features = selector_rfecv_diabetes.transform(X_features)
+X_train_selected, X_test_selected, y_train_selected, y_test_selected =
+train_test_split(X_selected_features, y_target, test_size=0.3,
+random_state=42)
+diabetes_model_selected = LogisticRegression(max_iter=200)
+diabetes_model_selected.fit(X_train_selected, y_train_selected)
+y_pred_selected = diabetes_model_selected.predict(X_test_selected)
+accuracy_selected = accuracy_score(y_test_selected, y_pred_selected)
+print(f'Accuracy after Forward Feature Selection (Diabetes):
+{accuracy_selected:.4f}')
