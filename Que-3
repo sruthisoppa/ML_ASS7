@@ -1,0 +1,6 @@
+import pandas as pd 
+from sklearn.model_selection import train_test_split 
+from sklearn.linear_model import LogisticRegression 
+from sklearn.metrics import accuracy_score diabetes_dataset = pd.read_csv('diabetes.csv') 
+X_features = diabetes_dataset.drop(columns=['Outcome']) 
+y_target = diabetes_dataset['Outcome'] correlation_matrix = diabetes_dataset.corr() high_corr_pairs = correlation_matrix[correlation_matrix.abs() > 0.8].stack().index.tolist() features_to_drop = set() for feature1, feature2 in high_corr_pairs: if feature1 != feature2: features_to_drop.add(feature2) cleaned_diabetes_data = diabetes_dataset.drop(columns=features_to_drop) X_features_corr = cleaned_diabetes_data.drop(columns=['Outcome']) y_target_corr = cleaned_diabetes_data['Outcome'] X_train_corr, X_test_corr, y_train_corr, y_test_corr = train_test_split(X_features_corr, y_target_corr, test_size=0.3, random_state=42) diabetes_model_corr = LogisticRegression(max_iter=200) diabetes_model_corr.fit(X_train_corr, y_train_corr) y_pred_corr = diabetes_model_corr.predict(X_test_corr) model_accuracy_corr = accuracy_score(y_test_corr, y_pred_corr) print(f'Accuracy after High Correlation Filter (Diabetes): {model_accuracy_corr:.4f}')
